@@ -13,7 +13,7 @@
 #ifdef WIN32
 #define FB_FLIP_XY 0
 #else
-#define SYS_CLK_KHZ 250000
+#define BOOST_CLK_KHZ 250000
 
 // Flip XY causes image to be addressed in column major order
 // When sent to the display controller, we set the orientation
@@ -116,7 +116,7 @@ void lcd_init(bool serial)
     cfg.pin_bl = 22;
     cfg.dma_chan = 1;
     if (serial) {
-        cfg.intf.si.spi = PICO_DEFAULT_SPI_INSTANCE;
+        cfg.intf.si.spi = spi0;
         cfg.intf.si.pin_din = PICO_DEFAULT_SPI_TX_PIN;
         cfg.intf.si.pin_clk = PICO_DEFAULT_SPI_SCK_PIN;
     } else {
@@ -624,7 +624,7 @@ void main_loop()
 	textbox_set_position(&tbox, 0, 0);
 
 	uint in_text_line = 0;
-	uint32_t cur_time, last_time = 0;
+	uint32_t cur_time, last_time = 0, frame_time;
 	float fps;
 
 	const uint8_t* pc_ptr = NULL;
@@ -673,6 +673,7 @@ void main_loop()
 	uint total_skipped_frames = 0;
 	nes.frame_delta_time = 0;
 	last_time = time_us_32();
+	frame_time = last_time;
 
 #ifdef PPU_MULTI_THREAD
 #ifdef WIN32
@@ -694,7 +695,7 @@ void main_loop()
 		// Wait for 16.667 ms, to render at roughly 60fps
 		// May still cause tearing artifiact, since this is not synchronized
 		// to display controller
-		while (cur_time - last_time < 16667 && skipped_frames == 0) {
+		while (cur_time - frame_time < 16667 && skipped_frames == 0) {
 			cur_time = time_us_32();
 		}
 
@@ -708,6 +709,7 @@ void main_loop()
 
 		nes.rendered_time += cur_time - last_time;
 		last_time = cur_time;
+		frame_time += 16667;
 
 		if (nes.rendered_frames >= TBOX_RENDER_FRAME_PERIOD) {
 			// Calculate and report out the frames per second
@@ -1813,12 +1815,12 @@ void main()
 #else
     //uint vco_freq, postdiv1, postdiv2;
     //check_sys_clock_khz(125000, &vco_freq, &postdiv1, &postdiv2);
-    set_sys_clock_khz(SYS_CLK_KHZ, false);
+    set_sys_clock_khz(BOOST_CLK_KHZ, false);
     clock_configure(clk_peri,
         0, // Only AUX mux on ADC
         CLOCKS_CLK_PERI_CTRL_AUXSRC_VALUE_CLKSRC_PLL_SYS,
-        SYS_CLK_KHZ * 1000,
-        SYS_CLK_KHZ * 1000);
+        BOOST_CLK_KHZ * 1000,
+        BOOST_CLK_KHZ * 1000);
     stdio_init_all();
     lcd_init(true);
 #endif

@@ -72,7 +72,7 @@ void st7789_init(const st7789_cfg_t* cfg, uint width, uint height, uint8_t orien
         st7789_cfg = *cfg;
     } else {
         st7789_cfg.serial = true;
-        st7789_cfg.intf.si.spi = PICO_DEFAULT_SPI_INSTANCE;
+        st7789_cfg.intf.si.spi = spi0;
         st7789_cfg.pin_cs = PICO_DEFAULT_SPI_CSN_PIN;
         st7789_cfg.intf.si.pin_din = PICO_DEFAULT_SPI_TX_PIN;
         st7789_cfg.intf.si.pin_clk = PICO_DEFAULT_SPI_SCK_PIN;

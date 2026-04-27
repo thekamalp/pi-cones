@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
+set(PICO_BOARD pico2)
+
 # Pull in SDK (must be before project)
 include(pico_sdk_import.cmake)
 
@@ -21,7 +23,6 @@ add_executable(${CMAKE_PROJECT_NAME})
 # pull in common dependencies
 target_link_libraries(${CMAKE_PROJECT_NAME}
     pico_stdlib
-    pico_cyw43_arch_none
     pico_multicore
     hardware_dma
     hardware_spi
