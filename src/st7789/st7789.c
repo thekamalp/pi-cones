@@ -86,7 +86,7 @@ void st7789_init(const st7789_cfg_t* cfg, uint width, uint height, uint8_t orien
 
     if (st7789_cfg.serial) {
         // setup SPI
-        spi_init(st7789_cfg.intf.si.spi, 62500000);
+        spi_init(st7789_cfg.intf.si.spi, 75000000);
         st7789_dma_write_addr = &spi_get_hw(st7789_cfg.intf.si.spi)->dr;
         if (st7789_cfg.pin_cs != ST7789_NO_CONNECT) {
             spi_set_format(st7789_cfg.intf.si.spi, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
@@ -195,7 +195,13 @@ void st7789_write(const void* data, size_t len)
     if (!st7789_ram_wr) {
         st7789_ramwr();
 
-        if(st7789_cfg.serial) spi_set_format(st7789_cfg.intf.si.spi, 16, SPI_CPOL_1, SPI_CPHA_1, SPI_MSB_FIRST);
+        if (st7789_cfg.serial) {
+            if (st7789_cfg.pin_cs != ST7789_NO_CONNECT) {
+                spi_set_format(st7789_cfg.intf.si.spi, 16, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+            } else {
+                spi_set_format(st7789_cfg.intf.si.spi, 16, SPI_CPOL_1, SPI_CPHA_1, SPI_MSB_FIRST);
+            }
+        }
         st7789_ram_wr = true;
     }
     if (st7789_cfg.dma_chan < MAX_DMA) {

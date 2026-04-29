@@ -13,7 +13,7 @@
 #ifdef WIN32
 #define FB_FLIP_XY 0
 #else
-#define BOOST_CLK_KHZ 250000
+#define BOOST_CLK_KHZ 260000
 
 // Flip XY causes image to be addressed in column major order
 // When sent to the display controller, we set the orientation
