@@ -496,7 +496,7 @@ void __no_inline_not_in_flash_func(process_pixels)(uint min_x, uint max_x, uint 
 			//// Add base of name table
 			//tile_addr += NESSYS_CHR_NTB_WIN_MIN;
 
-			tile_x = (x + (nes.ppu.scroll[0] & 0x1f));
+			tile_x = (x + (nes.ppu.scroll_x & 0x1f));
 			if ((rstate->tile_x & 0xf) == 0x0) {
 				//// the attr addr is similar, except each byte corresponds to a 32x32 region, instea of 8x8
 				//attr_addr = 0x3c0 + (((tile_y & 0xe0) >> 2) | ((tile_x & 0xe0) >> 5));
@@ -538,7 +538,7 @@ void __no_inline_not_in_flash_func(process_pixels)(uint min_x, uint max_x, uint 
 			//planes = (planes & 0x6666) | ((planes & 0x8888) >> 3) | ((planes & 0x1111) << 3);
 
 			//rstate->pat_planes = (planes << (tile_x & 0x7));
-			tile_x = (x + (nes.ppu.scroll[0] & 0x7));
+			tile_x = (x + (nes.ppu.scroll_x & 0x7));
 			rstate->pat_planes = nes.ppu.disp_tile_pix[(tile_x & 0x1f8) + (y + nes.ppu.scroll_y & 0x7)];
 			if (x == min_x) {
 				rstate->pat_planes >>= (2 * (tile_x & 0x7));
@@ -1680,7 +1680,7 @@ void main_loop()
 
 			}
 #endif
-
+			nes.ppu.scroll_x = nes.ppu.scroll[0];
 			nes.scan_line++;
 
 			// if we're going into the renderable part of the frame, reload the scan_line oam at the end of each scan line

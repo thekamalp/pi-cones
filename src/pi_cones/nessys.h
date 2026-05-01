@@ -392,6 +392,7 @@ typedef struct {
 	uint8_t scan_line_sprite[256];
 	uint8_t scan_line_min_sprite_x;  // minimum x position of any sprite in this scanline
 	uint8_t scan_line_max_sprite_x;  // maximum x position of any sprite in this scanline
+	uint16_t scroll_x;
 	uint16_t scroll_y;
 	uint16_t mem_addr;
 	uint16_t t_mem_addr;
