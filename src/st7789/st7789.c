@@ -236,10 +236,12 @@ void st7789_wait_for_write()
 void st7789_fill(uint16_t pixel)
 {
     if (st7789_cfg.dma_chan < MAX_DMA) {
+        static uint16_t fill_color;
+        fill_color = pixel;
         uint num_pix = st7789_width * st7789_height;
         channel_config_set_read_increment(&st7789_dma_cfg, false);
         st7789_set_window(0, 0, st7789_width, st7789_height);
-        st7789_write(&pixel, num_pix * 2);
+        st7789_write(&fill_color, num_pix * 2);
         channel_config_set_read_increment(&st7789_dma_cfg, true);
     } else {
         static const uint BUFFER_SIZE = 64;
